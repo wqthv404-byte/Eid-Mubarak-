@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A Eid Surprise for You 🌙</title>
+    <style>
+        :root { --primary: #ff1a75; --gold: #ffd700; --bg-dark: #12000a; }
+        body, html { margin: 0; padding: 0; width: 100%; height: 100%; background: radial-gradient(circle, #33001a 0%, var(--bg-dark) 100%); font-family: 'Georgia', serif; overflow: hidden; color: white; }
+
+        /* Matrix Rain - Subtle */
+        #matrix { position: fixed; top: 0; left: 0; z-index: 1; opacity: 0.15; pointer-events: none; }
+        
+        /* Page Styles */
+        .page { position: absolute; width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; z-index: 10; transition: all 1s ease-in-out; }
+        .hidden { opacity: 0; pointer-events: none; transform: scale(0.95); display: none !important; }
+
+        /* PAGE 1: FIREWORKS & GLOW */
+        #fireworkCanvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 5; }
+        .neon-glow {
+            font-size: 3rem; color: #fff;
+            text-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 30px var(--primary), 0 0 40px var(--primary), 0 0 50px var(--primary);
+            animation: neonPulse 1.5s ease-in-out infinite alternate;
+        }
+
+        /* Heart Container - Pulsing */
+        .heart-container { position: relative; width: 340px; height: 340px; margin-bottom: 30px; filter: drop-shadow(0 0 20px var(--primary)); animation: heartPulse 2.5s ease-in-out infinite; }
+        .photo-chip { position: absolute; width: 75px; height: 75px; border-radius: 50%; border: 3px solid white; object-fit: cover; animation: floatPhoto 4s ease-in-out infinite; box-shadow: 0 5px 15px rgba(0,0,0,0.5); }
+        .photo-chip:last-child { width: 100px; height: 100px; z-index: 100; border: 4px solid var(--gold); border-radius: 20px; }
+
+        /* Global UI */
+        .glass-card { background: rgba(0, 0, 0, 0.3); backdrop-filter: blur(20px); border: 1px solid rgba(255, 26, 117, 0.3); padding: 40px; border-radius: 30px; box-shadow: 0 0 50px rgba(255, 26, 117, 0.2); max-width: 85%; position: relative; z-index: 15; }
+        .btn { background: linear-gradient(45deg, var(--primary), #ff4d94); color: white; border: none; padding: 15px 40px; border-radius: 50px; font-weight: bold; cursor: pointer; margin-top: 25px; box-shadow: 0 0 20px var(--primary); transition: 0.3s; z-index: 20; }
+        .btn:hover { transform: scale(1.1); box-shadow: 0 0 40px var(--primary); }
+        #typewriter { font-size: 1.4rem; color: #fff; line-height: 1.6; min-height: 100px; }
+
+        /* Animations */
+        @keyframes neonPulse { from { text-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 30px var(--primary); } to { text-shadow: 0 0 15px #fff, 0 0 30px var(--primary), 0 0 50px var(--primary), 0 0 70px var(--primary); } }
+        @keyframes floatPhoto { 0%, 100% { transform: translate(0, 0) rotate(0deg); } 50% { transform: translate(10px, -15px) rotate(8deg); } }
+        @keyframes heartPulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
+    </style>
+</head>
+<body>
+
+    <canvas id="matrix"></canvas>
+
+    <canvas id="fireworkCanvas"></canvas>
+    <div id="p1" class="page">
+        <h1 class="neon-glow">Hey Gorgeous...</h1>
+        <button class="btn" onclick="nextPage(1, 2)">Open with Love ❤️</button>
+    </div>
+
+    <div id="p2" class="page hidden">
+        <div class="heart-container" id="photoHeart"></div>
+        <div class="glass-card">
+            <h1>Eid Mubarak 🌙💖</h1>
+            <p>You are the heartbeat of my life.</p>
+            <button class="btn" onclick="nextPage(2, 3)">Read My Letter 💌</button>
+        </div>
+    </div>
+
+    <div id="p3" class="page hidden">
+        <div class="glass-card">
+            <div id="typewriter"></div>
+            <button id="msgBtn" class="btn hidden" onclick="nextPage(3, 4)">Scan My Heart ✨</button>
+        </div>
+    </div>
+
+    <div id="p4" class="page hidden">
+        <div class="glass-card">
+            <h1 style="color: var(--gold);">Forever Yours</h1>
+            <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=I_Love_You_so_much_Jaan_Eid_Mubarak!" style="border: 5px solid white; border-radius: 15px; margin: 20px;">
+            <p>Long press or screenshot for a secret...</p>
+        </div>
+    </div>
+
+    <audio id="bgMusic" loop>
+        <source src="song.mp3" type="audio/mp3">
+    </audio>
+
+<script>
+    // Matrix Logic (Red themed)
+    const mCanvas = document.getElementById('matrix');
+    const mCtx = mCanvas.getContext('2d');
+    mCanvas.width = window.innerWidth; mCanvas.height = window.innerHeight;
+    const mDrops = Array(Math.floor(mCanvas.width/15)).fill(1);
+    function drawMatrix() {
+        mCtx.fillStyle = "rgba(18, 0, 10, 0.1)"; mCtx.fillRect(0, 0, mCanvas.width, mCanvas.height);
+        mCtx.fillStyle = "#ff1a75"; mCtx.font = "15px monospace";
+        mDrops.forEach((y, i) => {
+            const text = "LOVE"[Math.floor(Math.random()*4)];
+            mCtx.fillText(text, i * 15, y * 15);
+            if (y * 15 > mCanvas.height && Math.random() > 0.975) mDrops[i] = 0;
+            mDrops[i]++;
+        });
+    }
+    setInterval(drawMatrix, 50);
+
+    // Heart Fireworks Logic
+    const fCanvas = document.getElementById('fireworkCanvas');
+    const fCtx = fCanvas.getContext('2d');
+    fCanvas.width = window.innerWidth; fCanvas.height = window.innerHeight;
+    let particles = [];
+    class Particle {
+        constructor(x, y) { this.x = x; this.y = y; this.velX = (Math.random()-0.5)*8; this.velY = (Math.random()-0.5)*8; this.life = 100; this.color = `hsl(${Math.random()*20+340}, 100%, 70%)`; }
+        update() { this.x += this.velX; this.y += this.velY; this.velY += 0.05; this.life--; }
+        draw() { fCtx.fillStyle = this.color; fCtx.beginPath(); fCtx.arc(this.x, this.y, 3, 0, Math.PI*2); fCtx.fill(); }
+    }
+    function spawnFirework() {
+        let x = fCanvas.width*0.2 + Math.random()*fCanvas.width*0.6;
+        let y = fCanvas.height*0.2 + Math.random()*fCanvas.height*0.4;
+        for(let i=0; i<30; i++) particles.push(new Particle(x, y));
+    }
+    const fireworkInterval = setInterval(spawnFirework, 1500); // Spawn every 1.5s
+    function drawFireworks() {
+        fCtx.clearRect(0,0,fCanvas.width,fCanvas.height);
+        particles = particles.filter(p => p.life > 0);
+        particles.forEach(p => { p.update(); p.draw(); });
+        requestAnimationFrame(drawFireworks);
+    }
+    drawFireworks();
+
+    // Normal Page Logic
+    function nextPage(current, next) {
+        document.getElementById(`p${current}`).classList.add('hidden');
+        document.getElementById(`p${next}`).classList.remove('hidden');
+        if(current === 1) { 
+            document.getElementById('bgMusic').play(); createHeart(); 
+            clearInterval(fireworkInterval); // Stop fireworks for next page
+            fCanvas.style.display = "none";
+        }
+        if(next === 3) typeWriter("My dearest... Life became beautiful when you stepped into it. This Eid, I just want to thank Allah for giving me the best gift ever—YOU. Eid Mubarak, Jaan. ❤️", "typewriter");
+    }
+
+    function createHeart() {
+        const container = document.getElementById('photoHeart');
+        const coords = [{x: 50, y: 25}, {x: 30, y: 15}, {x: 70, y: 15}, {x: 10, y: 30}, {x: 90, y: 30}, {x: 15, y: 55}, {x: 85, y: 55}, {x: 35, y: 75}, {x: 65, y: 75}, {x: 50, y: 92}, {x: 50, y: 53}];
+        coords.forEach((pos, i) => {
+            const img = document.createElement('img');
+            img.src = (i + 1) + ".jpg";
+            img.className = 'photo-chip';
+            img.style.left = pos.x + '%'; img.style.top = pos.y + '%';
+            img.style.animationDelay = (i * 0.4) + 's';
+            container.appendChild(img);
+        });
+    }
+
+    function typeWriter(text, elementId) {
+        let i = 0; const ele = document.getElementById(elementId);
+        ele.innerHTML = "";
+        function type() {
+            if (i < text.length) { ele.innerHTML += text.charAt(i); i++; setTimeout(type, 60); }
+            else document.getElementById('msgBtn').classList.remove('hidden');
+        }
+        type();
+    }
+</script>
+</body>
+</html>
