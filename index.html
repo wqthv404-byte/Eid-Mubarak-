@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Eid Mubarak Jaan 🌙💖</title>
+    <style>
+        :root { --primary: #ff1a75; --gold: #ffd700; --bg: #0d0008; }
+        body, html { margin: 0; padding: 0; width: 100%; height: 100%; background: var(--bg); font-family: 'Georgia', serif; overflow: hidden; color: white; }
+
+        .bg-glow { position: fixed; width: 100%; height: 100%; background: radial-gradient(circle at center, #4d0026 0%, var(--bg) 80%); z-index: 0; }
+        .sticker { position: absolute; font-size: 30px; z-index: 5; opacity: 0.5; animation: drift 6s ease-in-out infinite; pointer-events: none; }
+        
+        @keyframes drift { 0%, 100% { transform: translate(0,0); } 50% { transform: translate(10px, -20px); } }
+
+        .page { position: absolute; width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 10; transition: 0.8s ease-in-out; }
+        .hidden { opacity: 0; pointer-events: none; transform: scale(2); display: none !important; }
+
+        /* Page 1: Neon Cover */
+        .neon-title { font-size: 3.5rem; text-align: center; text-shadow: 0 0 20px var(--primary), 0 0 40px var(--primary); margin-bottom: 20px; }
+        .cover-img { width: 200px; height: 200px; border-radius: 50%; border: 5px solid #fff; cursor: pointer; transition: 0.4s; box-shadow: 0 0 30px var(--primary); object-fit: cover; }
+        .cover-img:hover { transform: scale(1.1); }
+
+        /* Page 2: Interactive Heart */
+        .heart-container { position: relative; width: 350px; height: 350px; margin-bottom: 20px; }
+        
+        .photo-chip { 
+            position: absolute; width: 75px; height: 75px; border-radius: 50%; 
+            border: 2px solid white; object-fit: cover; cursor: pointer;
+            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            z-index: 10;
+        }
+
+        /* Clicked/Active Image State */
+        .photo-chip.active {
+            width: 180px; height: 180px;
+            z-index: 100;
+            border: 4px solid var(--gold);
+            box-shadow: 0 0 50px var(--primary);
+            left: 50% !important; top: 50% !important;
+            transform: translate(-50%, -50%) scale(1.2);
+            border-radius: 15px;
+        }
+
+        .glass-card { background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.1); padding: 30px; border-radius: 30px; max-width: 85%; }
+        .btn { background: var(--primary); color: white; border: none; padding: 12px 30px; border-radius: 50px; font-weight: bold; cursor: pointer; margin-top: 15px; }
+
+        #typewriter { font-size: 1.3rem; min-height: 80px; color: #fff; }
+    </style>
+</head>
+<body>
+
+    <div class="bg-glow"></div>
+    <div class="sticker" style="top:10%; left:10%">🌙</div>
+    <div class="sticker" style="top:15%; right:15%">✨</div>
+
+    <div id="p1" class="page">
+        <h1 class="neon-title">Eid Mubarak<br>Jaan 💖</h1>
+        <img src="cover.jpg" class="cover-img" onclick="startSurprise()">
+        <p style="color: var(--gold); margin-top: 20px; animation: drift 2s infinite;">TAP TO OPEN 🎁</p>
+    </div>
+
+    <div id="p2" class="page hidden" style="display: none;">
+        <p style="font-size: 0.9rem; color: #ffb3d1;">Tap any photo to zoom in ✨</p>
+        <div class="heart-container" id="photoHeart"></div>
+        <div class="glass-card">
+            <button class="btn" onclick="nextPage(2, 3)">Read My Message 💌</button>
+        </div>
+    </div>
+
+    <div id="p3" class="page hidden" style="display: none;">
+        <div class="glass-card">
+            <div id="typewriter"></div>
+            <button id="msgBtn" class="btn hidden" onclick="nextPage(3, 4)" style="display:none;">The Final Surprise ✨</button>
+        </div>
+    </div>
+
+    <div id="p4" class="page hidden" style="display: none;">
+        <div class="glass-card">
+            <h2 style="color: var(--gold);">Forever Yours</h2>
+            <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=I_Love_You_Jaan" style="border: 5px solid white; border-radius: 15px;">
+            <p>Scan for a secret!</p>
+        </div>
+    </div>
+
+    <audio id="bgMusic" loop>
+        <source src="song.mp3" type="audio/mp3">
+    </audio>
+
+<script>
+    function startSurprise() {
+        document.getElementById('bgMusic').play();
+        const p1 = document.getElementById('p1');
+        const p2 = document.getElementById('p2');
+        p1.classList.add('hidden');
+        setTimeout(() => {
+            p1.style.display = "none";
+            p2.style.display = "flex";
+            setTimeout(() => { p2.classList.remove('hidden'); createHeart(); }, 50);
+        }, 800);
+    }
+
+    function createHeart() {
+        const container = document.getElementById('photoHeart');
+        const coords = [{x:50,y:25},{x:30,y:15},{x:70,y:15},{x:10,y:30},{x:90,y:30},{x:15,y:55},{x:85,y:55},{x:35,y:75},{x:65,y:75},{x:50,y:92},{x:50,y:53}];
+        
+        coords.forEach((pos, i) => {
+            const img = document.createElement('img');
+            img.src = (i + 1) + ".jpg";
+            img.className = 'photo-chip';
+            img.style.left = pos.x + '%'; img.style.top = pos.y + '%';
+            
+            // CLICK EVENT FOR EVERY IMAGE
+            img.onclick = function() {
+                // If this image is already big, shrink it
+                if(this.classList.contains('active')) {
+                    this.classList.remove('active');
+                } else {
+                    // Shrink any other big images first
+                    document.querySelectorAll('.photo-chip').forEach(p => p.classList.remove('active'));
+                    // Make this one big
+                    this.classList.add('active');
+                }
+            };
+            container.appendChild(img);
+        });
+    }
+
+    function nextPage(current, next) {
+        document.getElementById(`p${current}`).classList.add('hidden');
+        const nextPg = document.getElementById(`p${next}`);
+        nextPg.style.display = "flex";
+        setTimeout(() => { nextPg.classList.remove('hidden'); }, 100);
+        if(next === 3) typeWriter("My dearest Jaan... Every Eid feels like a dream because I have you. You are my happiness, my heart, and my everything. Eid Mubarak, my love! ❤️", "typewriter");
+    }
+
+    function typeWriter(text, elementId) {
+        let i = 0; const ele = document.getElementById(elementId);
+        ele.innerHTML = "";
+        function type() {
+            if (i < text.length) { ele.innerHTML += text.charAt(i); i++; setTimeout(type, 60); }
+            else { document.getElementById('msgBtn').style.display = "inline-block"; }
+        }
+        type();
+    }
+</script>
+</body>
+</html>
