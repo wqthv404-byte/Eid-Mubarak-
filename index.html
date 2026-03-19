@@ -48,7 +48,38 @@
         @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-15px); } }
 
         /* Special Fireworks */
+    
         .sparkle { position: absolute; background: white; border-radius: 50%; pointer-events: none; }
+/* Update this part in your <style> section */
+.photo-chip {
+    position: absolute; 
+    width: 70px; 
+    height: 70px; 
+    border-radius: 12px;
+    border: 2px solid var(--primary); 
+    object-fit: cover;
+    /* This makes them move! */
+    animation: float 3s ease-in-out infinite; 
+    box-shadow: 0 0 15px var(--primary);
+    transition: transform 0.3s;
+}
+
+/* The movement logic */
+@keyframes float {
+    0% { transform: translate(0, 0) rotate(0deg); }
+    33% { transform: translate(5px, -10px) rotate(2deg); }
+    66% { transform: translate(-5px, -5px) rotate(-2deg); }
+    100% { transform: translate(0, 0) rotate(0deg); }
+    }
+      /* This makes the center image special */
+.photo-chip:last-child {
+    width: 90px;
+    height: 90px;
+    z-index: 100;
+    border: 3px solid var(--gold);
+    box-shadow: 0 0 25px var(--gold);
+}
+        
     </style>
 </head>
 <body>
@@ -174,6 +205,57 @@
         document.body.appendChild(s);
         setTimeout(() => s.remove(), 1000);
     }
+    /* Falling Hearts Style */
+.falling-heart {
+    position: absolute;
+    color: #ff1a75; /* Matches your romantic pink */
+    font-size: 20px;
+    user-select: none;
+    pointer-events: none;
+    z-index: 5;
+    animation: fall linear forwards;
+}
+
+@keyframes fall {
+    0% {
+        transform: translateY(-10vh) translateX(0) rotate(0deg);
+        opacity: 1;
+    }
+    100% {
+        transform: translateY(105vh) translateX(100px) rotate(360deg);
+        opacity: 0;
+    }
+                                                }
+        // Function to create falling hearts
+function startHearts() {
+    setInterval(() => {
+        const heart = document.createElement('div');
+        heart.innerHTML = "❤️"; // You can change this to 💖 or ✨
+        heart.className = 'falling-heart';
+        
+        // Randomize position and speed
+        heart.style.left = Math.random() * 100 + "vw";
+        heart.style.animationDuration = (Math.random() * 3 + 2) + "s"; 
+        heart.style.opacity = Math.random();
+        heart.style.fontSize = (Math.random() * 20 + 10) + "px";
+        
+        document.body.appendChild(heart);
+        
+        // Remove heart after it falls to keep the site fast
+        setTimeout(() => {
+            heart.remove();
+        }, 5000);
+    }, 300); // Creates a new heart every 300ms
+}
+
+// Start the hearts when the first button is clicked
+// Update your existing nextPage function to include startHearts();
+const originalNextPage = nextPage;
+nextPage = function(current, next) {
+    if(current === 1) startHearts();
+    originalNextPage(current, next);
+};
+    
 </script>
 </body>
 </html>
